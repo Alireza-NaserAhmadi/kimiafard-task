@@ -5,6 +5,8 @@ import { PageHeader } from "antd";
 
 function Home(props) {
   const listInnerRef = useRef();
+
+  const [height,setHeight]=useState(1131)
   const [currPage, setCurrPage] = useState(1);
   const [prevPage, setPrevPage] = useState(0);
   const [userList, setUserList] = useState([]);
@@ -12,6 +14,7 @@ function Home(props) {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("in function")
       const response = await axios.get(
         `https://api.instantwebtools.net/v1/passenger?page=${currPage}&size=10`
       );
@@ -21,22 +24,30 @@ function Home(props) {
         return;
       }
       setPrevPage(currPage);
+      
       setUserList([...userList, ...response.data.data]);
     };
     if (!lastList && prevPage !== currPage) {
+      console.log("in call")
       fetchData();
     }
-  }, [currPage , lastList, prevPage, userList]);
- 
+  }, [currPage]);
+
   
-  const onScroll = () => {
-    if (listInnerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      if (scrollTop + clientHeight === scrollHeight) {
-        console.log("Show")
-        console.log("currPage",currPage)
-        setCurrPage(currPage + 1);
-      }
+  const onScroll = async() => {
+     if (listInnerRef.current) {
+      let { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      scrollTop = Math.round(scrollTop)
+      clientHeight+=300
+ 
+      
+if(height<=scrollHeight){
+    if (scrollTop + clientHeight >= scrollHeight) {
+        setHeight(scrollHeight+1131)
+         setCurrPage(currPage + 1);
+         
+        }
+     }
     }
   };
 
